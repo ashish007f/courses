@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design for Data Engineers (2026)</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial;background:#f5f7fb;color:#1f2937}
+
+header{
+background:linear-gradient(135deg,#0f172a,#1e3a8a);
+color:white;
+padding:60px 20px;
+text-align:center
+}
+
+header h1{margin:0;font-size:40px}
+header p{opacity:.9;margin-top:10px}
+
+.container{
+display:flex;
+max-width:1300px;
+margin:auto
+}
+
+.sidebar{
+width:260px;
+background:#0f172a;
+color:white;
+padding:25px;
+min-height:100vh;
+position:sticky;
+top:0
+}
+
+.sidebar h3{margin-top:0}
+
+.sidebar a{
+display:block;
+color:#cbd5f5;
+text-decoration:none;
+margin:10px 0;
+font-size:14px
+}
+
+.sidebar a:hover{color:white}
+
+.content{
+flex:1;
+padding:40px
+}
+
+.module{
+background:white;
+border-radius:10px;
+padding:30px;
+margin-bottom:40px;
+box-shadow:0 8px 20px rgba(0,0,0,0.06)
+}
+
+.module h2{margin-top:0;color:#0f172a}
+
+.badge{
+background:#e0e7ff;
+color:#3730a3;
+padding:5px 10px;
+border-radius:6px;
+font-size:12px
+}
+
+.lesson{
+margin-top:15px;
+padding:15px;
+border-radius:8px;
+background:#f8fafc
+}
+
+.lesson h4{margin:0 0 5px 0}
+
+.video{
+margin-top:10px;
+position:relative;
+padding-bottom:56.25%;
+height:0
+}
+
+.video iframe{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%
+}
+
+.diagram{
+margin-top:20px;
+padding:20px;
+background:#f9fafb;
+border-radius:8px
+}
+
+.roadmap{
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 8px 20px rgba(0,0,0,0.06);
+margin-bottom:40px
+}
+
+footer{
+text-align:center;
+padding:30px;
+background:#0f172a;
+color:white;
+margin-top:40px
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>System Design for Data Engineers</h1>
+<p>Modern Data Platform Architecture • Streaming • Lakehouse • Real World Systems</p>
+</header>
+
+<div class="container">
+
+<div class="sidebar">
+<h3>Course Modules</h3>
+<a href="#roadmap">Learning Roadmap</a>
+<a href="#m1">Module 1 – Foundations</a>
+<a href="#m2">Module 2 – Infrastructure</a>
+<a href="#m3">Module 3 – Streaming</a>
+<a href="#m4">Module 4 – Batch</a>
+<a href="#m5">Module 5 – Scaling</a>
+<a href="#m6">Module 6 – Real Systems</a>
+</div>
+
+<div class="content">
+
+<div class="roadmap" id="roadmap">
+<h2>Learning Roadmap</h2>
+<p>This course teaches how modern companies design scalable data platforms handling billions of events per day.</p>
+
+<div class="diagram mermaid">
+flowchart LR
+A[Data Sources] --> B[Ingestion]
+B --> C[Streaming Processing]
+C --> D[Batch Processing]
+D --> E[Data Lake]
+E --> F[Data Warehouse]
+F --> G[BI / ML / Analytics]
+</div>
+</div>
+
+
+<div class="module" id="m1">
+<h2>Module 1 – Foundations</h2>
+<span class="badge">Videos 1–5</span>
+
+<div class="lesson">
+<h4>What is Data Engineering System Design</h4>
+<p>Understanding how large scale data platforms are built in modern companies.</p>
+</div>
+
+<div class="lesson">
+<h4>Batch vs Streaming Systems</h4>
+<p>Latency vs throughput tradeoffs and when to use each approach.</p>
+</div>
+
+<div class="diagram mermaid">
+flowchart LR
+A[Batch Processing] --> B[Daily Reports]
+C[Streaming Processing] --> D[Real Time Analytics]
+</div>
+
+</div>
+
+
+<div class="module" id="m2">
+<h2>Module 2 – Core Data Infrastructure</h2>
+<span class="badge">Videos 6–10</span>
+
+<div class="lesson">
+<h4>Kafka Architecture Deep Dive</h4>
+<p>Producers, brokers, partitions and consumer groups.</p>
+</div>
+
+<div class="lesson">
+<h4>Spark Architecture</h4>
+<p>Driver, executors and distributed processing model.</p>
+</div>
+
+<div class="diagram mermaid">
+flowchart LR
+P[Producers] --> K[Kafka Cluster]
+K --> S[Spark Streaming]
+S --> L[Data Lake]
+</div>
+
+</div>
+
+
+<div class="module" id="m3">
+<h2>Module 3 – Real-Time Streaming Systems</h2>
+<span class="badge">Videos 11–15</span>
+
+<div class="lesson">
+<h4>Design Real Time Analytics Pipeline</h4>
+<p>Processing millions of events per second.</p>
+</div>
+
+<div class="lesson">
+<h4>Fraud Detection Streaming System</h4>
+<p>Using streaming + ML to detect suspicious transactions.</p>
+</div>
+
+<div class="diagram mermaid">
+flowchart LR
+A[App Events] --> B[Kafka]
+B --> C[Stream Processor]
+C --> D[Real Time Aggregation]
+D --> E[Dashboard]
+</div>
+
+</div>
+
+
+<div class="module" id="m4">
+<h2>Module 4 – Batch Data Pipelines</h2>
+<span class="badge">Videos 16–20</span>
+
+<div class="lesson">
+<h4>Design Batch ETL Pipelines</h4>
+<p>Daily pipelines processing terabytes of data.</p>
+</div>
+
+<div class="lesson">
+<h4>Change Data Capture Pipelines</h4>
+<p>Streaming database changes into data lakes.</p>
+</div>
+
+<div class="diagram mermaid">
+flowchart LR
+DB[(Operational DB)] --> CDC[Debezium]
+CDC --> K[Kafka]
+K --> SP[Spark]
+SP --> DL[Data Lake]
+</div>
+
+</div>
+
+
+<div class="module" id="m5">
+<h2>Module 5 – Scaling Data Platforms</h2>
+<span class="badge">Videos 21–25</span>
+
+<div class="lesson">
+<h4>Partitioning Strategies</h4>
+<p>How to scale pipelines for massive datasets.</p>
+</div>
+
+<div class="lesson">
+<h4>Fault Tolerant Pipelines</h4>
+<p>Checkpointing, retries and exactly once processing.</p>
+</div>
+
+<div class="diagram mermaid">
+flowchart LR
+S[Sources] --> I[Ingestion Layer]
+I --> P[Distributed Compute]
+P --> ST[Scalable Storage]
+</div>
+
+</div>
+
+
+<div class="module" id="m6">
+<h2>Module 6 – Real World Architectures</h2>
+<span class="badge">Videos 26–30</span>
+
+<div class="lesson">
+<h4>YouTube Analytics Pipeline</h4>
+<p>Processing billions of user events.</p>
+</div>
+
+<div class="lesson">
+<h4>Clickstream Analytics System</h4>
+<p>Tracking user interactions across large scale websites.</p>
+</div>
+
+<div class="diagram mermaid">
+flowchart LR
+SRC[Apps / Services] --> ING[Kafka / CDC]
+ING --> PROC[Stream + Batch Processing]
+PROC --> LAKE[Data Lake]
+LAKE --> WH[Warehouse]
+WH --> BI[Dashboards]
+</div>
+
+</div>
+
+</div>
+</div>
+
+<footer>
+<p>© 2026 Data Engineering System Design Course</p>
+</footer>
+
+</body>
+</html>
