@@ -62,7 +62,7 @@ Use *uv* for python project management.
 
 **Implementation:**
 - Kafka topics for different event types
-- Batch file source read as a file stream or replayed into Kafka
+- Batch file source read as a file stream
 - PySpark Structured Streaming jobs for ingestion
 - Schema validation, enrichment, and same downstream Bronze landing zone for both sources
 
