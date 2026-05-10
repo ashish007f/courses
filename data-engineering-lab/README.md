@@ -26,76 +26,49 @@ The platform is built with **SOLID principles** and a **modular, decoupled archi
 -   **Simulator:** Python 3.12+ (FastAPI, SQLAlchemy Async, Pydantic, Faker)
 -   **Tooling:** `uv` for lightning-fast Python package management
 
-## 🚀 Module 1: Core Banking Simulator (Current State)
-
+## ✅ Module 1: Core Banking Simulator
 We have successfully implemented the source system simulator with a Transactional Outbox.
 
-### 1. Running the Infrastructure
-1.  Ensure Docker Desktop is running.
-2.  Start the cluster:
+## ✅ Module 2: Unified Stream-Based Data Processing
+We have implemented a unified ingestion layer using PySpark Structured Streaming that consumes both real-time Kafka events and batch files, landing them into a Delta Lake Bronze layer.
+
+### 1. New Infrastructure
+- **MinIO:** Object storage for the Medallion architecture (Bronze, Silver, Gold buckets).
+- **Delta Lake:** Storage format for the Bronze layer to ensure ACID compliance and schema enforcement.
+
+### 2. Running the Ingestion Job
+1.  Ensure Docker cluster is running (includes MinIO):
     ```bash
     docker-compose up -d
     ```
-3.  Access Control Center at: `http://localhost:9021`
+2.  Run the Unified Bronze Ingestion job:
+    ```bash
+    export PYTHONPATH=$PYTHONPATH:.
+    uv run python ingestion/app/bronze_ingestion.py
+    ```
 
-### 2. Registering the Debezium Connector
-Once the infrastructure is up, register the connector to start streaming from the Outbox:
-```bash
-curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" http://localhost:8083/connectors/ -d '{
-  "name": "banking-outbox-connector",
-  "config": {
-    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-    "tasks.max": "1",
-    "database.hostname": "postgres",
-    "database.port": "5432",
-    "database.user": "user",
-    "database.password": "password",
-    "database.dbname": "banking_db",
-    "topic.prefix": "simulator",
-    "table.include.list": "public.outbox",
-    "plugin.name": "pgoutput",
-    "transforms": "outbox",
-    "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
-    "transforms.outbox.table.field.event.id": "id",
-    "transforms.outbox.table.field.event.key": "id",
-    "transforms.outbox.route.topic.replacement": "${routedByValue}",
-    "transforms.outbox.route.by.field": "topic",
-    "transforms.outbox.table.field.event.payload": "payload",
-    "transforms.outbox.table.expand.json.payload": "true",
-    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "value.converter.schemas.enable": "false",
-    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "key.converter.schemas.enable": "false"
-  }
-}'
-```
+    ```
+    $SPARK_HOME/sbin/start-connect-server.sh \
+  --packages "org.apache.spark:spark-sql-kafka-0-10_2.13:4.1.1,org.apache.hadoop:hadoop-aws:3.4.0,io.delta:delta-spark_4.1_2.13:4.1.0" \
+  --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
+  --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog" \
+  --conf "spark.hadoop.fs.s3a.endpoint=http://localhost:9000" \
+  --conf "spark.hadoop.fs.s3a.access.key=admin" \
+  --conf "spark.hadoop.fs.s3a.secret.key=password" \
+  --conf "spark.hadoop.fs.s3a.path.style.access=true" \
+  --conf "spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem"
 
-### 3. Running the Simulator
-1.  Install dependencies:
-    ```bash
-    uv sync
-    ```
-2.  Start the Simulator API:
-    ```bash
-    uv run uvicorn simulator.app.main:app --host 0.0.0.0 --port 8000
-    ```
-3.  Start the Simulation Script (Generates continuous data):
-    ```bash
-    uv run simulator/run_simulation.py
-    ```
+   ```
+
+### 3. Unified Flow
+- **Real-time:** Automatically consumes from `customers`, `accounts`, `transactions`, and `balances` Kafka topics.
+- **Batch:** Monitors `vol/batch_landing/`. Dropping a JSON file here will trigger automatic ingestion, normalization, and archiving.
 
 ## 📡 API Flow & Data Products
+... (rest of table) ...
 
-| Entity | Action | Kafka Topic | Description |
-| :--- | :--- | :--- | :--- |
-| **Customer** | `POST /customers/simulate` | `customers` | Generates a new unique person identity. |
-| **Account** | `POST /accounts/{cust_id}` | `accounts` | Creates a bank account linked to a customer. |
-| **Transaction** | `POST /transactions/deposit` | `transactions` | Immutable audit record of the deposit. |
-| **Balance** | (Triggered by Transacton) | `balances` | **The Delta:** New balance and amount changed. |
-
-## 🔜 Next Steps: Module 2
-
-We will now move to **Unified Stream-Based Ingestion** using PySpark Structured Streaming to process these Kafka topics and land them into a Bronze layer.
+## 🔜 Next Steps: Module 3
+We will move to **Lakehouse Storage with Iceberg** to implement the Silver and Gold layers of our Medallion architecture on MinIO.
 
 ---
 **Lab Author:** [Your Name]  

@@ -2,8 +2,8 @@
 
 ## Overview
 
-This lab provides hands-on experience building an enterprise data platform based on architectural patterns from the course. We'll implement a simplified core banking system mimicking Thought Machine Vault 5+ as the real-time data source, focusing on data products and patterns rather than production-grade deployment. 
-Code structure *MUST* be modular as well.
+This lab provides hands-on experience building an enterprise data platform based on architectural patterns from the course in data-engineering folder. We'll implement a simplified core banking system mimicking Thought Machine Vault 5+ as the real-time data source, focusing on data products and patterns rather than production-grade deployment. 
+Code structure *MUST* be modular as well.New folder for each module.
 Use *uv* for python project management.
 
 **Key Focus Areas:**
