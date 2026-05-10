@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 5: Serving | CoursePlatform</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+
+<div class="app-wrapper">
+    <nav class="sidebar">
+        <a href="../../index.html" class="sidebar-brand">CoursePlatform</a>
+        
+        <div class="nav-group">
+            <span class="nav-label">General</span>
+            <a href="../index.html" class="nav-link">Course Overview</a>
+        </div>
+
+        <div class="nav-group">
+            <span class="nav-label">Curriculum</span>
+            <a href="module1.html" class="nav-link">Module 1: Overview</a>
+            <a href="module2.html" class="nav-link">Module 2: Ingestion</a>
+            <a href="module3.html" class="nav-link">Module 3: Processing</a>
+            <a href="module4.html" class="nav-link">Module 4: Storage</a>
+            <a href="module5.html" class="nav-link active">Module 5: Serving</a>
+            <div class="nav-subgroup">
+                <a href="#patterns" class="nav-sublink">Serving Patterns</a>
+                <a href="#architecture" class="nav-sublink">Three-Tier Architecture</a>
+                <a href="#closing" class="nav-sublink">Closing Thought</a>
+            </div>
+            <a href="module6.html" class="nav-link">Module 6: Reliability & Ops</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <a href="../index.html" class="back-link">← Course Home</a>
+        
+        <section class="header-section">
+            <div class="badge-pill">Module 5</div>
+            <h1>Data Serving & Consumption</h1>
+            <p>Designing the interface between the data platform and its diverse consumers—from Analysts to AI Agents.</p>
+        </section>
+
+        <!-- Section: Serving Patterns -->
+        <div class="card" id="patterns">
+            <h2>Architectural Serving Patterns</h2>
+            <p>Consumption is categorized by the <strong>"Serving Pattern."</strong> Each pattern maps a specific persona to a tailored technical configuration, ensuring the interface matches the latency and retrieval needs of the consumer.</p>
+
+            <div class="diagram-box">
+                <div class="mermaid">
+                flowchart BT
+                    %% Data Foundation
+                    DATA[(Data Foundation<br/>Gold / Streams)]
+                    
+                    %% Serving Layer
+                    subgraph SL [Serving Layer]
+                        direction LR
+                        BI[Analytical Pattern]
+                        APP[Application Pattern]
+                        AI[Intelligence Pattern]
+                        RT[Real-Time Pattern]
+                    end
+
+                    %% Personas
+                    subgraph CP [Consumers]
+                        direction LR
+                        EXE[Executive / Analyst]
+                        USER[Application Users]
+                        AGENTS[ML Models / LLMs]
+                    end
+
+                    %% Logical Links for Alignment
+                    DATA --> BI
+                    DATA --> APP
+                    DATA --> AI
+                    DATA --> RT
+
+                    BI --> EXE
+                    APP --> USER
+                    RT --> USER
+                    AI --> AGENTS
+
+                    %% Styling
+                    style DATA fill:#fef3c7,stroke:#d97706,stroke-width:2px
+                    style SL fill:#f0f9ff,stroke:#0f172a,stroke-width:2px
+                    style CP fill:#f0f9ff,stroke:#0f172a,stroke-width:2px
+                </div>
+            </div>
+
+            <div class="lesson-item">
+                <h4>1. The Analytical & BI Pattern</h4>
+                <p><strong>Consumer:</strong> Executive / Analyst</p>
+                <p><strong>Architecture:</strong> Star Schema &rarr; Distributed SQL / OLAP. Focuses on high-speed join performance and human readability for decision support.</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>2. The Application & API Pattern</h4>
+                <p><strong>Consumer:</strong> The Application</p>
+                <p><strong>Architecture:</strong> One Big Table (OBT) / Key-Value &rarr; API Gateway. Focuses on sub-millisecond response times and high concurrency for user-facing features.</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>3. The Intelligence & AI Pattern</h4>
+                <p><strong>Consumer:</strong> AI Agents / LLMs</p>
+                <p><strong>Architecture:</strong> Embeddings / Feature Sets &rarr; Vector Search. Focuses on semantic retrieval (RAG) and training-serving consistency for ML models.</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>4. The Real-Time & Streaming Pattern</h4>
+                <p><strong>Consumer:</strong> The Application</p>
+                <p><strong>Architecture:</strong> Live Streams &rarr; Stream Processing &rarr; Real-Time APIs. This pattern supports two delivery modes:</p>
+                <ul>
+                    <li><strong>Push-based:</strong> Server initiates updates via WebSockets or SSE for instantaneous delivery (e.g., live fraud alerts).</li>
+                    <li><strong>Pull-based:</strong> Client fetches the latest state from a queryable stream table or materialized view (e.g., real-time dashboard polling).</li>
+                </ul>
+            </div>
+
+            <div class="lesson-item" style="margin-top: 20px;">
+                <h4>Tools of the Trade</h4>
+                <span class="badge-pill">Apache Spark</span> <span class="badge-pill">Apache Flink</span> <span class="badge-pill">Kafka</span> <span class="badge-pill">Big Query</span> <span class="badge-pill">Redis</span>
+            </div>
+        </div>
+
+        <!-- Section: Three-Tier Architecture -->
+        <div class="card" id="architecture">
+            <h2>The Three-Tier Serving Architecture</h2>
+            <p>A mature serving layer decouples definition, structure, and execution to ensure architectural flexibility across all consumption patterns.</p>
+
+            <div class="lesson-item">
+                <h4>Tier 1: Semantic Layer (The Definition)</h4>
+                <p>Metrics (e.g., Revenue, Churn) are defined once in code. This layer acts as the "translator" between technical data and business meaning, providing a consistent view for both humans and AI Agents.</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>Tier 2: Modeling Layer (The Structure)</h4>
+                <p>Data is organized into formats based on retrieval: <strong>SQL Models</strong> (Star Schema, OBT), <strong>Vector Models</strong> (Embeddings), and <strong>Stream Models</strong> (Windowed aggregations and event envelopes).</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>Tier 3: Execution Layer (The Engine)</h4>
+                <p>Engines are matched to the latency budget: <strong>Distributed SQL</strong> for exploration, <strong>Real-Time OLAP</strong> for dashboards, <strong>Specialized Stores</strong> (KV, Vector) for lookups, and <strong>Stream Processors</strong> for push/pull real-time serving.</p>
+            </div>
+
+            <div class="diagram-box">
+                <div class="mermaid">
+                graph LR
+                    subgraph "Tier 1: Definition"
+                        SL[Semantic Layer]
+                    end
+                    subgraph "Tier 2: Structure"
+                        MDL[SQL / Vectors / Streams]
+                    end
+                    subgraph "Tier 3: Execution"
+                        ENG[OLAP / KV / Vector / Flink]
+                    end
+
+                    SL --> MDL
+                    MDL --> ENG
+                    ENG --> CONSUMER[Dashboards / AI / Real-Time APIs]
+
+                    style SL fill:#f0f9ff,stroke:#0ea5e9
+                    style MDL fill:#f0f9ff,stroke:#0ea5e9
+                    style ENG fill:#f0f9ff,stroke:#0ea5e9
+                </div>
+            </div>
+
+            <div class="lesson-item" style="margin-top: 20px;">
+                <h4>Tools of the Trade</h4>
+                <span class="badge-pill">dbt Semantic Layer</span> <span class="badge-pill">Cube</span> <span class="badge-pill">Trino</span> <span class="badge-pill">ClickHouse</span> <span class="badge-pill">Apache Flink</span> <span class="badge-pill">Pinecone</span> <span class="badge-pill">Redis</span>
+            </div>
+        </div>
+
+        <!-- Closing Thought -->
+        <div class="card card-closing" id="closing">
+            <h2>🏗️ Closing Thought</h2>
+            <div class="lesson-item" style="border-bottom: none;">
+                <blockquote>
+                    "The success of a data platform is measured by its transparency. In a perfect serving layer, the Analyst sees a Star Schema, the App sees an API, and the User sees a Live Stream—none of them care about the underlying infrastructure."
+                </blockquote>
+            </div>
+
+            <div class="lesson-item" style="border-bottom: none;">
+                <h4>The Serving Manifesto</h4>
+                <blockquote>
+                    "By providing a unified interface across request-response and streaming models, the platform remains the definitive 'Single Source of Truth' for the entire enterprise, regardless of how the data is being accessed or who is accessing it."
+                </blockquote>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

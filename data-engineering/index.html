@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoursePlatform | Expert Tech Courses</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --bg-main: #ffffff;
+            --bg-alt: #f9fafb;
+            --border: #e5e7eb;
+        }
+
+        * { box-sizing: border-box; }
+        
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        nav {
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        header {
+            padding: 80px 0 60px;
+            text-align: center;
+            background-color: var(--bg-alt);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin: 0 0 12px 0;
+            color: var(--text-main);
+        }
+
+        header p {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .course-grid {
+            padding: 60px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 24px;
+        }
+
+        .course-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+            border-color: var(--primary);
+        }
+
+        .card-image {
+            height: 200px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .card-content {
+            padding: 32px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-content h2 {
+            margin: 0 0 12px 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .card-content p {
+            color: var(--text-muted);
+            margin: 0 0 24px 0;
+            font-size: 1rem;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9375rem;
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 60px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.5rem; }
+            .course-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="#" class="logo">Architectural Blueprints</a>
+        </div>
+    </nav>
+
+    <header>
+        <div class="container">
+            <h1>Architectural Blueprints</h1>
+            <p>Learn the in-demand system design & architectural skills with this structured, industry-aligned learning module.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="course-grid">
+            <a href="data-engineering/architectural-blueprints.html" class="course-card">
+                <div class="card-image">
+                    System Design
+                </div>
+                <div class="card-content">
+                    <h2>System Design for Data Engineers</h2>
+                    <p>A top-down system design course explaining how modern data platforms are architected, from enterprise-wide flows to individual infrastructure layers.</p>                    <div class="card-footer">
+                        View Course Structure →
+                    </div>
+                </div>
+            </a>
+
+            <!-- Placeholder for future course -->
+            <!-- <div class="course-card" style="opacity: 0.6; cursor: not-allowed;">
+                <div class="card-image" style="background: #94a3b8;">
+                    Coming Soon
+                </div>
+                <div class="card-content">
+                    <h2>Distributed Systems</h2>
+                    <p>Master distributed systems with deep technical knowledge.</p>
+                    <div class="card-footer" style="color: #64748b;">
+                        Not yet available
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Architectural Blueprints. Designed for modern Data & Software engineers.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 3: Processing | CoursePlatform</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+    <style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+    th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+    .model-section {
+        margin-bottom: 40px;
+    }
+    .diagram-box {
+        background: #fdfdfd;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        display: flex;
+        justify-content: center;
+    }
+    .refinement-box {
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 8px;
+    }
+    summary {
+        cursor: pointer;
+        font-weight: 700;
+        list-style: none;
+        display: flex;
+        align-items: center;
+    }
+    summary::-webkit-details-marker {
+        display: none;
+    }
+    summary::before {
+        content: '▶';
+        display: inline-block;
+        margin-right: 10px;
+        transition: transform 0.2s;
+        font-size: 0.8em;
+    }
+    details[open] summary::before {
+        transform: rotate(90deg);
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Re-run mermaid when details are opened to fix rendering issues
+        document.querySelectorAll('details').forEach((detail) => {
+            detail.addEventListener('toggle', () => {
+                if (detail.open) {
+                    mermaid.init(undefined, detail.querySelectorAll('.mermaid'));
+                }
+            });
+        });
+    });
+</script>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <nav class="sidebar">
+        <a href="../../index.html" class="sidebar-brand">CoursePlatform</a>
+        
+        <div class="nav-group">
+            <span class="nav-label">General</span>
+            <a href="../index.html" class="nav-link">Course Overview</a>
+        </div>
+
+        <div class="nav-group">
+            <span class="nav-label">Curriculum</span>
+            <a href="module1.html" class="nav-link">Module 1: Overview</a>
+            <a href="module2.html" class="nav-link">Module 2: Ingestion</a>
+            <a href="module3.html" class="nav-link active">Module 3: Processing</a>
+            <div class="nav-subgroup">
+                <a href="#high-level" class="nav-sublink">High-Level Base Models</a>
+                <a href="#modern" class="nav-sublink">Modern Models</a>
+                <a href="#architectures" class="nav-sublink">System Architectures</a>
+                <a href="#comparison" class="nav-sublink">Comparison Table</a>
+                <a href="#hard-problems" class="nav-sublink">Hard Problems</a>
+                <a href="#closing" class="nav-sublink">Closing Thought</a>
+            </div>
+            <a href="module4.html" class="nav-link">Module 4: Storage</a>
+            <a href="module5.html" class="nav-link">Module 5: Serving</a>
+            <a href="module6.html" class="nav-link">Module 6: Scaling</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <a href="../index.html" class="back-link">← Course Home</a>
+        
+        <section class="header-section">
+            <div class="badge-pill">Module 3</div>
+            <h1>Data Processing Layer</h1>
+            <p>Mastering the fundamental models of modern data processing like processing models, processing guarantees, and problems.</p>
+        </section>
+
+        <div class="card" id="high-level">
+            <h2>The High-Level Processing Strategies</h2>
+            
+            <div class="model-section">
+                <h3>A. The Batch Model (Bounded)</h3>
+                <p><strong>Philosophy:</strong> "Data at Rest." You wait for all the data to arrive in a bucket (S3/HDFS), then you process the entire pile at once.</p>
+                
+                <div class="diagram-box">
+                    <div class="mermaid">
+                    graph LR
+                        Start((Start)) --> Read[Read all data]
+                        Read --> Compute[Compute/Transform]
+                        Compute --> Write[Write Results]
+                        Write --> Stop((Stop))
+                    </div>
+                </div>
+
+                <ul>
+                    <li><strong>The Model:</strong> Start &rarr; Read all &rarr; Compute &rarr; Write &rarr; Stop.</li>
+                    <li><strong>Key Strength:</strong> High throughput and 100% completeness.</li>
+                    <li><strong>Key Weakness:</strong> High latency (the data is always "old" by the time you see it).</li>
+                </ul>
+
+                <details class="refinement-box" style="background: #f0f7ff; border-left: 4px solid #007bff;">
+                    <summary>🚀 Deep Dive: Beyond Map & Reduce</summary>
+                    <div style="margin-top: 15px;">
+                        <p>Modern engines like <strong>Spark, BigQuery, and Snowflake</strong> have evolved the legacy MapReduce pattern into <strong>DAG (Directed Acyclic Graph)</strong> execution.</p>
+                        <ul>
+                            <li><strong>The Legacy (MapReduce):</strong> A strict 2-step process that forced writing intermediate results to disk between phases, creating a massive I/O bottleneck.</li>
+                            <li><strong>Modern DAG Pipelining:</strong> Engines treat the entire job as one giant graph, keeping data in memory across multiple stages instead of forcing disk writes.</li>
+                            <li><strong>The Shuffle (The Real Bottleneck):</strong> This is the "Many-to-Many" network transfer. Data is re-partitioned by a key (e.g., <code>user_id</code>) across the network so that all records for that key land on the same worker for a Join or Aggregation. It remains the most expensive operation in any DAG.</li>
+                        </ul>
+                        <div class="diagram-box">
+                            <div class="mermaid">
+                            graph TD
+                                S1[Stage 1: Scan] --> S2[Stage 2: Filter/Map]
+                                S2 -->|Shuffle: Network Transfer| S3[Stage 3: Reduce/Join]
+                                S3 --> S4[Stage 4: Finalize]
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <div class="model-section">
+                <h3>B. The Streaming Model (Unbounded)</h3>
+                <p><strong>Philosophy:</strong> "Data in Motion." You process each event as it arrives.</p>
+
+                <div class="diagram-box">
+                    <div class="mermaid">
+                    graph LR
+                        Event((Event)) --> Recv[Receive Event]
+                        Recv --> State[Update State]
+                        State --> Emit[Emit Result]
+                        Emit -.->|Continuous Loop| Recv
+                    </div>
+                </div>
+
+                <ul>
+                    <li><strong>The Model:</strong> Continuous loop &rarr; Receive event &rarr; Update state &rarr; Emit result.</li>
+                    <li><strong>Key Strength:</strong> Minimum latency.</li>
+                    <li><strong>Key Weakness:</strong> Complexity in handling late data and out-of-order events.</li>
+                </ul>
+
+                <details class="refinement-box" style="background: #fff9f0; border-left: 4px solid #ff9800;">
+                    <summary>🔄 Deep Dive: The Continuity Logic</summary>
+                    <div style="margin-top: 15px;">
+                        <p>In streaming, <strong>State</strong> and <strong>Checkpointing</strong> replace the "End of Job" signal found in batch processing.</p>
+                        <ul>
+                            <li><strong>State Management (The "Working Database"):</strong> The engine acts like a database, storing "Partial Aggregations" (e.g., sum of spend in the last 59 mins) in high-performance local stores like <strong>RocksDB</strong>.</li>
+                            <li><strong>Checkpointing (The Safety Net):</strong> Since streams never end, the engine periodically takes a <strong>Distributed Snapshot</strong> of its entire state and Kafka offsets.</li>
+                            <li><strong>Fault Tolerance:</strong> If the system crashes at 2:05 PM, it reloads the 2:00 PM checkpoint and replays the 5 minutes of data from the source to ensure no data is lost or double-counted.</li>
+                        </ul>
+                        <div class="diagram-box">
+                            <div class="mermaid">
+                            sequenceDiagram
+                                participant S as Source (Kafka)
+                                participant E as Engine (Flink/Spark)
+                                participant C as Checkpoint Store (S3)
+                                Note over E: Processing T1, T2...
+                                E->>C: Take Snapshot (T100)
+                                Note over E: System Crash!
+                                E->>C: Restore Snapshot (T100)
+                                S->>E: Replay from T100
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card" id="modern">
+            <h2>The Modern Strategies</h2>
+            <p>Beyond the simple "Batch vs. Stream" split, modern platforms use these specialized models:</p>
+
+            <div class="model-section">
+                <h3>C. The Micro-Batch Model</h3>
+                <p><strong>Philosophy:</strong> "Stream as a Sequence of Small Batches." Treats unbounded data as a continuous series of very small, discrete batch jobs.</p>
+
+                <div class="diagram-box">
+                    <div class="mermaid">
+                    graph TD
+                        Stream[Unbounded Stream] --> B1[Batch 1s]
+                        Stream --> B2[Batch 1s]
+                        Stream --> B3[Batch 1s]
+                        subgraph Processing Engine
+                            B1 --> P1[Process]
+                            B2 --> P2[Process]
+                            B3 --> P3[Process]
+                        end
+                        P1 --> Out1[Result 1]
+                        P2 --> Out2[Result 2]
+                        P3 --> Out3[Result 3]
+                    </div>
+                </div>
+
+                <ul>
+                    <li><strong>The Model:</strong> Chop Stream &rarr; Run Mini-Batch &rarr; Commit &rarr; Repeat.</li>
+                    <li><strong>Key Strength:</strong> High reliability and deterministic fault tolerance (easy to re-run chunks).</li>
+                    <li><strong>Key Weakness:</strong> Higher latency than pure streaming (typically seconds vs. milliseconds).</li>
+                </ul>
+            </div>
+
+            <div class="model-section">
+                <h3>D. The Unified Model</h3>
+                <p><strong>Philosophy:</strong> "Logic is Independent of the Source." Define the processing logic once and apply it to both bounded and unbounded data.</p>
+
+                <div class="diagram-box">
+                    <div class="mermaid">
+                    graph TD
+                        Source1[S3/HDFS - Bounded] --> API{Unified API}
+                        Source2[Kafka/PubSub - Unbounded] --> API
+                        API --> Engine[Processing Engine]
+                        Engine --> Result[Consistent Results]
+                    </div>
+                </div>
+
+                <ul>
+                    <li><strong>The Model:</strong> Define "What, Where, When, How" &rarr; Map to Engine &rarr; Execute.</li>
+                    <li><strong>Key Strength:</strong> Operational simplicity; one codebase to maintain for all use cases.</li>
+                    <li><strong>Key Weakness:</strong> High implementation complexity and results depend heavily on the underlying Sink.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card" id="architectures">
+            <h2> High-Level Processing Architectures (System Patterns)</h2>
+            <p>These patterns define how you organize individual processing models into a complete, end-to-end system.</p>
+
+            <div class="model-section">
+                <h3>A. The Lambda Architecture</h3>
+                <p><strong>Philosophy:</strong> "Accuracy via Batch, Speed via Stream." Parallelize a "Batch Layer" for 100% correctness and a "Speed Layer" for real-time updates.</p>
+                
+                <div class="diagram-box">
+                    <div class="mermaid">
+                    graph TD
+                        Source[Data Source] --> Batch[Batch Layer: S3/HDFS]
+                        Source --> Stream[Speed Layer: Kafka]
+                        Batch --> Master[Master Dataset]
+                        Master --> BatchView[Batch Views]
+                        Stream --> StreamView[Real-time Views]
+                        BatchView --> Serving[Serving Layer: Query Results]
+                        StreamView --> Serving
+                    </div>
+                </div>
+
+                <ul>
+                    <li><strong>The Model:</strong> Batch (Immutable Master) + Stream (Delta Updates) &rarr; Merged View.</li>
+                    <li><strong>Key Strength:</strong> High fault tolerance; if the stream is buggy or crashes, the batch layer eventually corrects the data.</li>
+                    <li><strong>Key Weakness:</strong> Maintenance nightmare; you must maintain two identical codebases (e.g., Spark Batch and Flink Stream).</li>
+                </ul>
+            </div>
+
+            <div class="model-section">
+                <h3>B. The Kappa Architecture</h3>
+                <p><strong>Philosophy:</strong> "Everything is a Stream." Treat historical data as just a long-running stream from the beginning of time.</p>
+
+                <div class="diagram-box">
+                    <div class="mermaid">
+                    graph LR
+                        Source[Unified Log: Kafka/Pulsar] --> Engine[Stream Processor]
+                        Engine --> Sink[Serving Layer/DB]
+                        Source -.->|Replay| Engine
+                    </div>
+                </div>
+
+                <ul>
+                    <li><strong>The Model:</strong> Single Stream Source &rarr; Single Stream Engine &rarr; Final View.</li>
+                    <li><strong>Key Strength:</strong> Operational simplicity; only one codebase and one engine to maintain for all use cases.</li>
+                    <li><strong>Key Weakness:</strong> Requires high-retention stream storage (like Kafka Tiered Storage) to re-run historical data.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card" id="comparison">
+            <h2>🏗️ Strategy Comparison Table </h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Processing Model</th>
+                            <th>Dataset Nature</th>
+                            <th>Latency</th>
+                            <th>Complexity</th>
+                            <th>Reliability Guarantee</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Batch</td>
+                            <td>Bounded (Fixed)</td>
+                            <td>High (Hours)</td>
+                            <td>Low</td>
+                            <td>High (Easy to re-run)</td>
+                        </tr>
+                        <tr>
+                            <td>Streaming</td>
+                            <td>Unbounded</td>
+                            <td>Very Low (ms)</td>
+                            <td>Very High</td>
+                            <td>Hard (Requires Checkpoints)</td>
+                        </tr>
+                        <tr>
+                            <td>Micro-Batch</td>
+                            <td>Unbounded</td>
+                            <td>Low (Seconds)</td>
+                            <td>Medium</td>
+                            <td>High (Deterministic)</td>
+                        </tr>
+                        <tr>
+                            <td>Unified</td>
+                            <td>Both</td>
+                            <td>Dynamic</td>
+                            <td>High</td>
+                            <td>Depends on Sink</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="lesson-item" style="margin-top: 30px; border-top: 1px solid #eee; pt: 20px;">
+                <h4 style="margin-bottom: 15px;">🛠️ Tools of the Trade</h4>
+                <span class="badge-pill">Apache Spark</span>
+                <span class="badge-pill">Apache Flink</span>
+                <span class="badge-pill">Apache Beam</span>
+                <span class="badge-pill">Kafka Streams</span>
+                <span class="badge-pill">DBT</span>
+            </div>
+        </div>
+
+        <div class="card" id="hard-problems">
+            <h2>🧠 The "Hard Problems" in Distributed Processing</h2>
+        
+            <div class="model-section">
+                <details class="refinement-box" style="background: #f8f9fa; border-left: 4px solid #6c757d;">
+                    <summary>🕒 1. Watermarks & Late Data (The "Time" Problem)</summary>
+                    <div style="margin-top: 15px;">
+                        <p><strong>The Challenge:</strong> In streaming, "Event Time" (when it happened) is rarely "Processing Time" (when the engine saw it). Data can arrive late due to network lag or mobile offline mode.</p>
+                        <ul>
+                            <li><strong>The Concept:</strong> A <strong>Watermark</strong> is a moving threshold that tells the engine: <em>"I am reasonably sure no more data older than X will arrive."</em></li>
+                            <li><strong>The Solution:</strong> The engine uses the watermark to decide when to "close" a time window (e.g., 12:00-12:05) and emit the final aggregation.</li>
+                        </ul>
+                        <div class="diagram-box">
+                            <div class="mermaid">
+                            graph LR
+                                E1(Event 12:01) --> P[Processing Engine]
+                                E2(Event 12:04) --> P
+                                W(Watermark 12:03) --> P
+                                P -->|Close Window| R[Emit 12:00-12:03 Results]
+                                E3(Late Event 12:02) -.->|Dropped/Side Output| P
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="refinement-box" style="background: #f8f9fa; border-left: 4px solid #6c757d;">
+                    <summary>⚖️ 2. Backpressure (The "Stability" Problem)</summary>
+                    <div style="margin-top: 15px;">
+                        <p><strong>The Challenge:</strong> What happens when the Source (Kafka) sends 1M events/sec but your Sink (Database) can only write 100k events/sec?</p>
+                        <ul>
+                            <li><strong>The Concept:</strong> Without backpressure, the processing engine would buffer data until it ran out of memory (OOM) and crashed.</li>
+                            <li><strong>The Solution:</strong> The downstream component "signals" the upstream component to slow down, propagating all the way back to the source.</li>
+                        </ul>
+                        <div class="diagram-box">
+                            <div class="mermaid">
+                            graph RL
+                                Sink[Slow Database] -- "Signal: I'm full!" --> Engine[Processing Engine]
+                                Engine -- "Signal: Slow down!" --> Source[Kafka Source]
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="refinement-box" style="background: #f8f9fa; border-left: 4px solid #6c757d;">
+                    <summary>🔐 3. Processing Semantics (The "Integrity" Problem)</summary>
+                    <div style="margin-top: 15px;">
+                        <p><strong>The Challenge:</strong> Ensuring data is neither lost nor duplicated during a failure.</p>
+                        <ul>
+                            <li><strong>At-Least-Once:</strong> Simplest to build. Data is never lost, but might be processed twice. (OK for logs/dashboards).</li>
+                            <li><strong>Exactly-Once:</strong> The "Holy Grail." Requires a distributed transaction (Two-Phase Commit) between the engine and the sink. (Required for billing/finance).</li>
+                        </ul>
+                        <div class="diagram-box">
+                            <div class="mermaid">
+                            graph TD
+                                A[At-Least-Once] -->|Retry| B[Possible Duplicates]
+                                E[Exactly-Once] -->|Checkpoint + Sink Commit| F[Single Logical Effect]
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="refinement-box" style="background: #f8f9fa; border-left: 4px solid #6c757d;">
+                    <summary>🔥 4. Data Skew (The "Hot Key" Problem)</summary>
+                    <div style="margin-top: 15px;">
+                        <p><strong>The Challenge:</strong> In a distributed system, work is partitioned by a key (e.g., <code>user_id</code>). If one user (like a celebrity or a bot) has 1,000x more data than others, that single worker will bottleneck the entire pipeline.</p>
+                        <ul>
+                            <li><strong>The Concept:</strong> 99% of your workers finish in minutes, but the 1% handling the "Hot Key" takes hours, keeping the whole job "Running."</li>
+                            <li><strong>The Solution:</strong> <em>Salting</em> (manually spreading keys) or <strong>Adaptive Query Execution (AQE)</strong>. Modern engines like Spark now dynamically detect skew at runtime and automatically split "Hot Partitions" into smaller chunks to balance the load across the cluster.</li>
+                        </ul>
+                        <div class="diagram-box">
+                            <div class="mermaid">
+                            graph TD
+                                subgraph Workers
+                                    W1[Worker 1: Idle]
+                                    W2[Worker 2: HOT KEY - 99% Load]
+                                    W3[Worker 3: Idle]
+                                end
+                                Data[Skewed Input Data] --> W1
+                                Data -->|90% of Data| W2
+                                Data --> W3
+                                style W2 fill:#ffcccc,stroke:#ff0000
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Closing Thought -->
+        <div class="card card-closing" id="closing">
+            <h2>🏗️ Closing Thought</h2>
+            <div class="lesson-item" style="border-bottom: none;">
+                <blockquote>
+                    "The goal of modern processing is to make the distinction between 'Batch' and 'Stream' irrelevant to the business. In a mature platform, logic is defined once and executed against any dataset nature."
+                </blockquote>
+            </div>
+
+            <div class="lesson-item" style="border-bottom: none;">
+                <h4>The Processing Manifesto</h4>
+                <blockquote>
+                    "By mastering stateful execution and unified APIs, you build pipelines that are as accurate as batch but as fast as streaming, providing the real-time heartbeat required for 2026 enterprises."
+                </blockquote>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

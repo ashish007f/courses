@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2: Ingestion | CoursePlatform</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+<style>
+    .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+        font-size: 0.9375rem;
+    }
+    .comparison-table th, .comparison-table td {
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+    }
+    .comparison-table th {
+        background-color: var(--bg-alt);
+        font-weight: 600;
+        color: var(--text-main);
+    }
+    .comparison-table tr:last-child td {
+        border-bottom: none;
+    }
+</style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <nav class="sidebar">
+        <a href="../../index.html" class="sidebar-brand">CoursePlatform</a>
+        
+        <div class="nav-group">
+            <span class="nav-label">General</span>
+            <a href="../index.html" class="nav-link">Course Overview</a>
+        </div>
+
+        <div class="nav-group">
+            <span class="nav-label">Curriculum</span>
+            <a href="module1.html" class="nav-link">Module 1: Overview</a>
+            <a href="module2.html" class="nav-link active">Module 2: Ingestion</a>
+            <div class="nav-subgroup">
+                <a href="#hub-and-spoke" class="nav-sublink">Hub-and-Spoke</a>
+                <a href="#event-driven" class="nav-sublink">Event-Driven</a>
+                <a href="#cdc" class="nav-sublink">Log-Based (CDC)</a>
+                <a href="#storage-triggered" class="nav-sublink">Storage-Triggered</a>
+                <a href="#api-pull" class="nav-sublink">API & Scraper</a>
+                <a href="#gateway" class="nav-sublink">Gateway/Proxy</a>
+                <a href="#anti-patterns" class="nav-sublink">Anti-Patterns</a>
+                <a href="#comparison" class="nav-sublink">Comparison Table</a>
+                <a href="#closing" class="nav-sublink">Closing Thought</a>
+            </div>
+            <a href="module3.html" class="nav-link">Module 3: Processing</a>
+            <a href="module4.html" class="nav-link">Module 4: Storage</a>
+            <a href="module5.html" class="nav-link">Module 5: Serving</a>
+            <a href="module6.html" class="nav-link">Module 6: Scaling</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <a href="../index.html" class="back-link">← Course Home</a>
+        
+        <section class="header-section">
+            <div class="badge-pill">Module 2</div>
+            <h1>Data Ingestion Layer</h1>
+            <p>The Ingestion Layer's mission is to provide <strong>Reliability, Durability, and Decoupling</strong>. It is the "Buffer" that protects your analytical systems from the volatility of source systems.</p>
+        </section>
+
+        <!-- 1. The Final Architecture -->
+        <div class="card" id="hub-and-spoke">
+            <h2>High level Architecture (The Hub-and-Spoke)</h2>
+            <p>In a modern stack, all ingestion strategies (CDC, Event-Driven, Batch, and API) ideally converge at the Event Streaming Backbone.</p>
+            
+            <div class="lesson-item">
+                <h4>The Ingress</h4>
+                <p>Data is captured from sources using the most appropriate strategy (Log-based for DBs, API-based for SaaS).</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>The Backbone</h4>
+                <p>Data is held in a distributed, replayable log (Kafka/Redpanda). This handles backpressure and provides a "single source of truth" for raw data.</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>The Egress</h4>
+                <p>Downstream systems (Data Lake, Real-time Analytics, Search Indices) consume the data at their own pace.</p>
+            </div>
+
+            <div class="diagram-box">
+                <div class="mermaid">
+                flowchart LR
+                subgraph Ingress [The Ingress]
+                    DB[(DB - CDC)]
+                    APP[App - Push]
+                    API[SaaS - Pull]
+                    EXCHANGE[File Exchange - Storage Trigger]
+                end
+                
+                HUB{The Backbone<br/>Event Stream}
+                
+                subgraph Egress [The Egress]
+                    LAKE[Data Lake / Warehouse]
+                    RT[Real-time APIs]
+                    ML[Machine Learning]
+                    SEARCH[Search Index]
+                end
+                
+                Ingress --> HUB
+                HUB --> Egress
+                
+                style HUB fill:#eef2ff,stroke:#4f46e5,stroke-width:2px
+                </div>
+            </div>
+        </div>
+
+        <span class="section-header">Ingestion Strategies</span>
+
+        <!-- Strategy 1 -->
+        <div class="card" id="event-driven">
+            <h2>2. Event-Driven Systems (The PUSH Pattern)</h2>
+            <p>Reactive architectures for low-latency event processing. In this strategy, the data platform is passive. The data is "born" in the application and sent immediately to an endpoint.</p>
+            
+            <div class="lesson-item">
+                <h4>The Concept</h4>
+                <p>The application code is instrumented to emit an event. This is common in Serverless or Microservices architectures.</p>
+            </div>
+            
+            <div class="lesson-item">
+                <h4>Common Patterns</h4>
+                <p><strong>Webhooks:</strong> An external service (like Stripe or GitHub) calls your API when an event occurs.<br/>
+                <strong>SDKs/Trackers:</strong> Front-end applications (Web/Mobile) send clickstream data directly to an ingestion gateway (e.g., Segment, Snowplow).</p>
+            </div>
+            
+            <div class="lesson-item">
+                <h4>Best For</h4>
+                <p>Real-time user behavior tracking, third-party integrations, and decoupled architectures.</p>
+            </div>
+            
+            <div class="diagram-box">
+                <div class="mermaid">
+                flowchart LR
+                APP[Web/Mobile App] -->|SDK / Tracker| GW[API Gateway]
+                EXT[External Service] -->|Webhook| GW
+                GW -->|Event Push| KAFKA{Event Stream}
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategy 2 -->
+        <div class="card" id="cdc">
+            <h2>3. Log-Based Ingestion (Change Data Capture)</h2>
+            <p>Instead of interacting with the database engine, you interact with the storage engine's history.</p>
+            
+            <div class="lesson-item">
+                <h4>The Concept</h4>
+                <p>Every modern database writes every change to a sequential file (WAL in Postgres, Binlog in MySQL, Redo Log in Oracle) before updating the table. CDC tools "tail" this file.</p>
+            </div>
+            
+            <div class="lesson-item">
+                <h4>Strategy</h4>
+                <p>You deploy a "Source Connector" (e.g., Debezium) that transforms these raw binary logs into structured events (JSON/Avro) and streams them to a broker.</p>
+            </div>
+            
+            <div class="lesson-item">
+                <h4>Best For</h4>
+                <p>Legacy modernization, synchronizing microservices, and high-volume transactional systems where you cannot risk performance degradation.</p>
+            </div>
+            
+            <div class="diagram-box">
+                <div class="mermaid">
+                flowchart LR
+                DB[(Operational DB)] -.-> WAL[WAL / Binlog]
+                WAL -->|Tail Log| CDC[CDC Connector<br>e.g. Debezium]
+                CDC -->|Stream Events| KAFKA{Event Stream}
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategy 3 -->
+        <div class="card" id="storage-triggered">
+            <h2>4. Storage-Triggered Ingestion (The "Landing Zone")</h2>
+            <p>This is a reactive pattern centered around Cloud Object Storage (S3, GCS, Azure Blob).</p>
+            
+            <div class="lesson-item">
+                <h4>The Concept</h4>
+                <p>A "Landing Zone" bucket acts as a buffer. As soon as a file is dropped (via SFTP, manual upload, or a legacy export), an event (like AWS S3 Event Notifications) triggers a serverless function (Lambda) to start the ingestion pipeline.</p>
+            </div>
+            
+            <div class="lesson-item">
+                <h4>Strategy</h4>
+                <p>Decouples the transfer of data from the ingestion of data. The source system doesn't need to know about your database; it just needs to know how to upload a file.</p>
+            </div>
+            
+            <div class="lesson-item">
+                <h4>Best For</h4>
+                <p>Partner data exchanges, legacy mainframe file drops, and massive bulk loads.</p>
+            </div>
+            
+            <div class="diagram-box">
+                <div class="mermaid">
+                flowchart LR
+                PARTNER[External System] -->|Upload File| S3[(Cloud Storage<br>Landing Zone)]
+                S3 -.->|Event Trigger| FUNC[Serverless Function]
+                FUNC -->|Start Pipeline| PL[Data Pipeline]
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategy 4 -->
+        <div class="card" id="api-pull">
+            <h2>5. API & Scraper Ingestion (The "Pull" Pattern)</h2>
+            <p>This is the strategy for data you don't own.</p>
+            
+            <div class="lesson-item">
+                <h4>The Concept</h4>
+                <p>You have a scheduled orchestrator (Airflow, Dagster) that calls an external REST/GraphQL API or scrapes a website at specific intervals.</p>
+            </div>
+            
+            <div class="lesson-item">
+                <h4>Strategy</h4>
+                <p>Requires handling Rate Limiting, Pagination, and Authentication. You are at the mercy of the source's uptime and schema changes.</p>
+            </div>
+            
+            <div class="lesson-item">
+                <h4>Best For</h4>
+                <p>SaaS data (Salesforce, Zendesk), public datasets, and social media sentiment analysis.</p>
+            </div>
+            
+            <div class="diagram-box">
+                <div class="mermaid">
+                flowchart LR
+                ORCH[Orchestrator<br>e.g. Airflow] -->|Schedule Task| SCRIPT[Ingestion Script]
+                SCRIPT -->|API Request| SAAS[External API<br>SaaS / Public]
+                SAAS -.->|JSON Response| SCRIPT
+                SCRIPT -->|Load| LAKE[(Data Lake)]
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategy 5 -->
+        <div class="card" id="gateway">
+            <h2>6. Gateway / Proxy Ingestion</h2>
+            <p>Used for high-frequency, low-latency telemetry data (IoT).</p>
+            
+            <div class="lesson-item">
+                <h4>The Concept</h4>
+                <p>A specialized "Gateway" (like an MQTT Broker or an NGINX proxy) sits at the edge. It collects thousands of small packets from sensors, aggregates or validates them, and then batches them into the main data stream.</p>
+            </div>
+            
+            <div class="lesson-item">
+                <h4>Best For</h4>
+                <p>IoT devices, smart meters, and industrial sensor data.</p>
+            </div>
+            
+            <div class="diagram-box">
+                <div class="mermaid">
+                flowchart LR
+                IOT1[Sensor 1] --> GW
+                IOT2[Sensor 2] --> GW
+                IOT3[Sensor 3] --> GW[Edge Gateway / Proxy<br>e.g. MQTT Broker]
+                GW -->|Batched / Validated| STREAM{Main Data Stream}
+                </div>
+            </div>
+        </div>
+
+        <!-- Ingestion Anti-Patterns -->
+        <div class="card" id="anti-patterns">
+            <h2>🚫 Ingestion Anti-Patterns</h2>
+            <p>These are the "trap doors" that experienced engineers avoid when designing ingestion layers.</p>
+            
+            <div class="lesson-item">
+                <h4>1. The "Dual-Write" Disaster</h4>
+                <p><strong>The Mistake:</strong> Trying to write to your Primary Database and your Message Queue/Stream in the same application code block.</p>
+                <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; font-size: 0.875rem;">
+                    # DON'T DO THIS<br/>
+                    db.save(user_data)<br/>
+                    kafka.send("user_topic", user_data)
+                </div>
+                <p><strong>The Risk:</strong> If the DB save succeeds but the Kafka send fails, your Data Platform is out of sync. <strong>The Fix:</strong> Use CDC to ensure the DB is the single source of truth.</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>2. The "Production Hammer" (Bulk Pulls)</h4>
+                <p><strong>The Mistake:</strong> Running heavy SQL queries against production replicas to extract data.</p>
+                <p><strong>The Risk:</strong> Massive SELECT * scans can saturate I/O and cause replication lag. <strong>The Rule:</strong> If moving >10% of a table daily, move to CDC or incremental exports.</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>3. Ignoring "Schema Poison"</h4>
+                <p><strong>The Mistake:</strong> Allowing sources to send raw, unvalidated JSON into the stream.</p>
+                <p><strong>The Risk:</strong> A sudden change (e.g., Integer to UUID) crashes downstream Spark/Flink jobs. <strong>The Fix:</strong> Use a Schema Registry (Avro/Protobuf) to enforce a contract at the Gateway.</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>4. The "Infinite Retry" Loop</h4>
+                <p><strong>The Mistake:</strong> Setting up an ingestion worker that retries a "poison pill" message forever.</p>
+                <p><strong>The Risk:</strong> Pipeline gets stuck and lag grows indefinitely. <strong>The Fix:</strong> Implement Dead Letter Queues (DLQ) for manual inspection.</p>
+            </div>
+        </div>
+
+        <!-- Comparison & Tools -->
+        <div class="card" id="comparison">
+            <h2>Strategy Comparison & Tools</h2>
+            
+            <div class="lesson-item">
+                <h4>Strategy Comparison Table</h4>
+                <div style="overflow-x: auto;">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Strategy</th>
+                                <th>Ownership</th>
+                                <th>Complexity</th>
+                                <th>Data Integrity</th>
+                                <th>Latency</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Log-Based (CDC)</td>
+                                <td>High (DB)</td>
+                                <td>High</td>
+                                <td>100% (Captures Deletes)</td>
+                                <td>Low</td>
+                            </tr>
+                            <tr>
+                                <td>Event-Driven</td>
+                                <td>High (App)</td>
+                                <td>Medium</td>
+                                <td>High (If retries exist)</td>
+                                <td>Real-time</td>
+                            </tr>
+                            <tr>
+                                <td>Storage-Triggered</td>
+                                <td>Medium</td>
+                                <td>Low</td>
+                                <td>Medium</td>
+                                <td>Variable</td>
+                            </tr>
+                            <tr>
+                                <td>API Pull</td>
+                                <td>Low</td>
+                                <td>Medium</td>
+                                <td>Dependent on Provider</td>
+                                <td>High</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="lesson-item">
+                <h4>Tools of the Trade</h4>
+                <span class="badge-pill">Apache Kafka</span> 
+                <span class="badge-pill">Debezium</span> 
+                <span class="badge-pill">AWS Kinesis</span>
+                <span class="badge-pill">Apache Airflow</span>
+                <span class="badge-pill">AWS Lambda</span>
+                <span class="badge-pill">Snowplow</span>
+            </div>
+        </div>
+
+        <!-- Closing Thought -->
+        <div class="card card-closing" id="closing">
+            <h2>🏗️ Closing Thought</h2>
+            <div class="lesson-item" style="border-bottom: none;">
+                <blockquote>
+                    "Ingestion is the 'immune system' of your data platform. By favoring log-based capture over brittle batch pulls, you ensure that the downstream platform remains resilient to the volatility of source systems."
+                </blockquote>
+            </div>
+
+            <div class="lesson-item" style="border-bottom: none;">
+                <h4>The Ingestion Manifesto</h4>
+                <blockquote>
+                    "The goal of a mature ingestion layer is to provide durability and decoupling. Every raw event captured today is a potential feature for an AI model tomorrow—capture it reliably, or lose the context forever."
+                </blockquote>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

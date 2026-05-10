@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 4: Storage | CoursePlatform</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+    th {
+        background-color: #f8fafc;
+        font-weight: 600;
+    }
+</style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <nav class="sidebar">
+        <a href="../../index.html" class="sidebar-brand">CoursePlatform</a>
+        
+        <div class="nav-group">
+            <span class="nav-label">General</span>
+            <a href="../index.html" class="nav-link">Course Overview</a>
+        </div>
+
+        <div class="nav-group">
+            <span class="nav-label">Curriculum</span>
+            <a href="module1.html" class="nav-link">Module 1: Overview</a>
+            <a href="module2.html" class="nav-link">Module 2: Ingestion</a>
+            <a href="module3.html" class="nav-link">Module 3: Processing</a>
+            <a href="module4.html" class="nav-link active">Module 4: Storage</a>
+            <div class="nav-subgroup">
+                <a href="#evolution" class="nav-sublink">Storage Evolution</a>
+                <a href="#sandwich" class="nav-sublink">The Storage Sandwich</a>
+                <a href="#medallion" class="nav-sublink">Medallion Architecture</a>
+                <a href="#data-mesh" class="nav-sublink">Data Mesh Pattern</a>
+                <a href="#closing" class="nav-sublink">Closing Thought</a>
+            </div>
+            <a href="module5.html" class="nav-link">Module 5: Serving</a>
+            <a href="module6.html" class="nav-link">Module 6: Reliability</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <a href="../index.html" class="back-link">← Course Home</a>
+        
+        <section class="header-section">
+            <div class="badge-pill">Module 4</div>
+            <h1>Data Storage Layer</h1>
+            <p>Architecting the foundation of the modern data platform.</p>
+        </section>
+
+        <!-- 1. Evolution -->
+        <div class="card" id="evolution">
+            <h2>The 4 Stages of Data Storage Evolution</h2>
+            <p>To understand where we are, we have to look at the "Ancestors" of the modern stack.</p>
+            
+            <div class="diagram-box">
+                <div class="mermaid">
+                graph TD
+                    DW[Data Warehouse<br/>Structured/ACID/Performance] --> CDW[Cloud Warehouse<br/>Decoupled SaaS]
+                    DL[Data Lake<br/>Unstructured/Scale/Open] --> LH[Data Lakehouse]
+                    CDW -->|Convergence| LH
+                    
+                    style DW fill:#f8fafc,stroke:#94a3b8
+                    style DL fill:#f8fafc,stroke:#94a3b8
+                    style CDW fill:#f1f5f9,stroke:#94a3b8
+                    style LH fill:#f0f9ff,stroke:#0ea5e9,stroke-width:2px
+                </div>
+            </div>
+
+            <div class="lesson-item">
+                <h4>Traditional Data Warehouse (The Monolith)</h4>
+                <p>Storage and Compute were physically married. To get more storage, you had to buy more CPU. Expensive, rigid, and siloed.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Data Lake (The Raw Frontier)</h4>
+                <p>"Store everything now, figure it out later." It solved the cost problem but created a Data Swamp—no transactions, no performance, and no schema control.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Modern Cloud Data Warehouse (The Decoupled SaaS)</h4>
+                <p>The first to truly separate Compute from Storage. High performance and easy to use, but often uses proprietary formats that "lock" your data.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>The Data Lakehouse (The Unified Standard)</h4>
+                <p>The final evolution. It brings the management of a warehouse (ACID, Schema) directly to the open files of a data lake.</p>
+            </div>
+        </div>
+
+        <!-- 2. The Storage Sandwich -->
+        <div class="card" id="sandwich">
+            <h2>The Technical Blueprint: The "Storage Sandwich"</h2>
+            <p>If you look under the hood of a Lakehouse, you see three distinct layers. This is how we achieve "Warehouse speed" on "Lake prices."</p>
+
+            <div class="diagram-box">
+                <div class="mermaid">
+                graph TD
+                    subgraph Brain [The Top: Table Format / The Brain]
+                        TF[Metadata & Transaction Layer]
+                    end
+                    subgraph Body [The Filling: File Format / The Body]
+                        FF[Compressed Columnar Files]
+                    end
+                    subgraph Foundation [The Bottom: Object Store / The Foundation]
+                        OS[Cloud Object Storage]
+                    end
+                    
+                    Brain --> Body
+                    Body --> Foundation
+                    
+                    style Brain fill:#f0f9ff,stroke:#0ea5e9
+                    style Body fill:#fff7ed,stroke:#f97316
+                    style Foundation fill:#f0fdf4,stroke:#22c55e
+                </div>
+            </div>
+
+            <div class="lesson-item">
+                <h4>The Top (Table Format / The Brain)</h4>
+                <p>Handles "Database" features: ACID transactions, Time Travel, and Schema Evolution. It tells the compute engine exactly which files to read.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>The Filling (File Format / The Body)</h4>
+                <p>Optimized columnar storage that ensures we only read the specific columns needed, drastically reducing network I/O.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>The Bottom (Object Store / The Foundation)</h4>
+                <p>The physical home for the bytes. It provides virtually infinite scale and high durability at a low cost.</p>
+            </div>
+        </div>
+
+        <!-- 3. Medallion -->
+        <div class="card" id="medallion">
+            <h2>The Organizational Pattern: Medallion Architecture</h2>
+            <p>While the "Sandwich" explains the tech, the Medallion Architecture explains the data quality journey.</p>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Layer</th>
+                            <th>State</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>🥉 Bronze</strong></td>
+                            <td>Raw / Immutable</td>
+                            <td>The "Audit" layer. Data is stored exactly as it came from the source. Never delete from here.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>🥈 Silver</strong></td>
+                            <td>Cleaned / Conformed</td>
+                            <td>The "Analyst" layer. PII is masked, data types are cast, and disparate sources are joined.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>🥇 Gold</strong></td>
+                            <td>Aggregated / Business-Ready</td>
+                            <td>The "Executive" layer. Highly optimized tables ready for high-speed reporting and ML.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 4. Data Mesh -->
+        <div class="card" id="data-mesh">
+            <h2>The Decentralized Pattern: Data Mesh</h2>
+            <p>Moves away from a central "Data Bottleneck" to a distributed model of ownership using a banking context.</p>
+            
+            <div class="diagram-box">
+                <div class="mermaid">
+                graph TD
+                    subgraph Domain_Retail [Domain: Retail Banking]
+                        P1[Data Product: Daily Transactions]
+                    end
+                    subgraph Domain_Loans [Domain: Loans & Mortgages]
+                        P2[Data Product: Credit Risk Scores]
+                    end
+                    subgraph Platform [Self-Serve Infrastructure]
+                        OS[Object Store]
+                        TF[Table Format]
+                    end
+                    
+                    Domain_Retail --> Platform
+                    Domain_Loans --> Platform
+                    
+                    style Domain_Retail fill:#f0f9ff,stroke:#0ea5e9
+                    style Domain_Loans fill:#f0f9ff,stroke:#0ea5e9
+                    style Platform fill:#f8fafc,stroke:#94a3b8,stroke-dasharray: 5 5
+                </div>
+            </div>
+
+            <div class="lesson-item">
+                <h4>Domain Ownership</h4>
+                <p>The <strong>Retail Banking team</strong> is responsible for the storage and quality of transaction data, as they understand the business context best.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Data as a Product</h4>
+                <p>The <strong>Loans team</strong> publishes "Credit Risk Scores" as a versioned, documented product with guaranteed uptime (SLOs).</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Self-Serve Infrastructure</h4>
+                <p>A central platform team provides the technology stack (the "Storage Sandwich") as a service to the domains.</p>
+            </div>
+        </div>
+
+        <!-- Closing Thought -->
+        <div class="card card-closing" id="closing">
+            <h2>🏗️ Closing Thought</h2>
+            <div class="lesson-item" style="border-bottom: none;">
+                <blockquote>
+                    "We use a <strong>Medallion Architecture</strong> to manage data quality, sitting on a <strong>3-Layer Sandwich</strong> to ensure our storage is as fast as a Traditional Warehouse but as open as a Data Lake."
+                </blockquote>
+            </div>
+
+            <div class="lesson-item" style="border-bottom: none;">
+                <h4>The Storage Manifesto</h4>
+                <blockquote>
+                    "The mission of the storage layer is to turn a 'Data Swamp' into a 'Data Lakehouse.' By decoupling compute from storage and adopting open table formats, we create an immutable foundation that is both performant and future-proof."
+                </blockquote>
+            </div>
+
+            <div class="lesson-item">
+                <h4>Tools of the Trade</h4>
+                <span class="badge-pill">Apache Iceberg</span>
+                <span class="badge-pill">Delta Lake</span>
+                <span class="badge-pill">Apache Parquet</span>
+                <span class="badge-pill">Snowflake</span>
+                <span class="badge-pill">BigQuery</span>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

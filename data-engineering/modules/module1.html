@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 1: Overview | CoursePlatform</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+
+<div class="app-wrapper">
+    <nav class="sidebar">
+        <a href="../../index.html" class="sidebar-brand">CoursePlatform</a>
+        
+        <div class="nav-group">
+            <span class="nav-label">General</span>
+            <a href="../index.html" class="nav-link">Course Overview</a>
+        </div>
+
+        <div class="nav-group">
+            <span class="nav-label">Curriculum</span>
+            <a href="module1.html" class="nav-link active">Module 1: Overview</a>
+            <div class="nav-subgroup">
+                <a href="#why" class="nav-sublink">Analytical Conflict</a>
+                <a href="#what" class="nav-sublink">5-Layer Solution</a>
+                <a href="#how" class="nav-sublink">Consistency Models</a>
+                <a href="#example" class="nav-sublink">Banking Example</a>
+                <a href="#closing" class="nav-sublink">Closing Thought</a>
+            </div>
+            <a href="module2.html" class="nav-link">Module 2: Ingestion</a>
+            <a href="module3.html" class="nav-link">Module 3: Processing</a>
+            <a href="module4.html" class="nav-link">Module 4: Storage</a>
+            <a href="module5.html" class="nav-link">Module 5: Serving</a>
+            <a href="module6.html" class="nav-link">Module 6: Scaling</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <a href="../index.html" class="back-link">← Course Home</a>
+        
+        <section class="header-section">
+            <div class="badge-pill">Module 1</div>
+            <h1>Modern Data Platform Overview</h1>
+            <p>Understand the big picture of how enterprise data platforms work.</p>
+        </section>
+
+        <!-- Section: WHY -->
+        <div class="card" id="why">
+            <h2>Why: The Problem of Operational Interference</h2>
+            <p>Analytical conflicts arise when complex SQL queries (OLAP) compete for resources with transactional systems (OLTP).</p>
+            <div class="lesson-item">
+                <h4>Analytical Conflict (OLTP vs OLAP)</h4>
+                <p>Scanning terabytes of data for an ad-hoc report on a core production database causes timeouts and locks, preventing real-time transactions like ATM withdrawals or mobile app payments.</p>
+                <p>While read replicas protect the Primary Writer, they are architecturally unsuitable for OLAP workloads due to Row-Store I/O inefficiencies and Replication Lag, which ultimately degrades the 'Read' experience for end-users</p>
+            </div>
+            <div class="diagram-box">
+                <img src="../diagrams/Why.png" alt="Enterprise Data Platform Architecture" style="max-width: 100%; height: auto; border-radius: 8px;">
+            </div>
+        </div>
+
+        <!-- Section: WHAT -->
+        <div class="card" id="what">
+            <h2>What: High-Level Data Flow (Source to Sight)</h2>
+            <p>A decoupled data platform architecture separates sources from analytics to resolve resource conflicts.</p>
+            <div class="lesson-item">
+                <h4>The 5-Layer Solution</h4>
+                <p>Moving data from Core DBs and CRMs through dedicated Ingestion, Processing, and Storage layers before serving it to Dashboards and APIs.</p>
+            </div>
+            <div class="diagram-box">
+                <img src="../diagrams/what.png" alt="Enterprise Data Platform Architecture" style="max-width: 100%; height: auto; border-radius: 8px;">
+            </div>
+        </div>
+
+        <!-- Section: HOW -->
+        <div class="card" id="how">
+            <h2>How: Guarantees and Trade-offs</h2>
+            <p>Understanding the fundamental difference between Immediate and Eventual consistency models.</p>
+            <div class="lesson-item">
+                <h4>Operational vs Analytical Guarantees</h4>
+                <p>Operational systems require Immediate Consistency (ACID) for transactions, while analytical systems accept Eventual Consistency (Lag) for massive scale and decoupling.</p>
+            </div>
+            <div class="diagram-box">
+                <img src="../diagrams/how.png" alt="Enterprise Data Platform Architecture" style="max-width: 100%; height: auto; border-radius: 8px;">
+            </div>
+        </div>
+
+        <!-- Section: Example -->
+        <div class="card" id="example">
+            <h2>Microservice Event Ingestion(Banking Example)</h2>
+            <p>This diagram zooms into one implementation: Kafka as a unified ingestion system. It shows how distinct banking services (ATM, Payments, Loans) all publish JSON messages to the same cluster.</p>
+            <div class="diagram-box">
+                <img src="../diagrams/microservice.png" alt="Enterprise Data Platform Architecture" style="max-width: 100%; height: auto; border-radius: 8px;">
+            </div>
+        </div>
+
+        <!-- Closing Thought -->
+        <div class="card card-closing" id="closing">
+            <h2>🏗️ Closing Thought</h2>
+            <div class="lesson-item" style="border-bottom: none;">
+                <blockquote style="border-left: 4px solid #4f46e5; padding-left: 15px; font-style: italic; color: #475569; margin: 20px 0;">
+                    "A modern data platform is not a single tool, but a decoupled ecosystem. Its success is measured by how effectively it resolves the conflict between operational speed and analytical depth."
+                </blockquote>
+            </div>
+
+            <div class="lesson-item" style="border-bottom: none;">
+                <h4>The Architectural Manifesto</h4>
+                <blockquote>
+                    "By treating data as a first-class product and isolating it from operational pressure, we transform raw events into a reliable foundation for both human decision-makers and autonomous AI agents."
+                </blockquote>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

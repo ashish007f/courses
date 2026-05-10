@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design for Data Engineering | CoursePlatform</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-wrapper">
+    <nav class="sidebar">
+        <a href="../index.html" class="sidebar-brand">CoursePlatform</a>
+        
+        <div class="nav-group">
+            <span class="nav-label">General</span>
+            <a href="index.html" class="nav-link active">Course Overview</a>
+            <div class="nav-subgroup">
+                <a href="#overview" class="nav-sublink">Course Mission</a>
+                <a href="#roadmap" class="nav-sublink">Learning Model</a>
+                <a href="#curriculum" class="nav-sublink">Curriculum Map</a>
+                <a href="#capstone" class="nav-sublink">Capstone Project</a>
+            </div>
+        </div>
+
+        <div class="nav-group">
+            <span class="nav-label">Curriculum</span>
+            <a href="modules/module1.html" class="nav-link">Module 1: Overview</a>
+            <a href="modules/module2.html" class="nav-link">Module 2: Ingestion</a>
+            <a href="modules/module3.html" class="nav-link">Module 3: Processing</a>
+            <a href="modules/module4.html" class="nav-link">Module 4: Storage</a>
+            <a href="modules/module5.html" class="nav-link">Module 5: Serving</a>
+            <a href="modules/module6.html" class="nav-link">Module 6: Reliability & Ops</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <a href="../index.html" class="back-link">← Back to Catalog</a>
+        
+        <section id="overview" class="header-section">
+            <div class="badge-pill">Architecture</div>
+            <h1>System Design for Data Engineering</h1>
+            <p>A top-down course explaining how modern data platforms are architected. Zoom from enterprise-wide flows into individual infrastructure layers.</p>
+        </section>
+
+        <section id="roadmap" class="card">
+            <h2>Learning Model</h2>
+            <div class="lesson-item">
+                <h4>1. Top-Down Architecture Approach</h4>
+                <p>Starting with the big picture before diving into technical details.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>2. Zoom into Each Data Platform Layer</h4>
+                <p>Detailed analysis of Ingestion, Processing, Storage, Serving, and Reliability.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>3. Design Concepts First</h4>
+                <p>Focusing on <i>why</i> systems are designed this way before introducing tools.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>4. Real-World Architecture Patterns</h4>
+                <p>Learning repeatable patterns used in industry-leading data platforms.</p>
+            </div>
+            
+        </section>
+
+        <section id="curriculum" class="card">
+            <h2>Course Curriculum Map</h2>
+            <p>A journey through the 5 layers of the modern data platform.</p>
+            <div class="diagram-box">
+                <div class="mermaid">
+                    graph TD
+                    A[Enterprise Data Platform]
+            
+                    A --> B[1. Ingestion Layer]
+                    A --> C[2. Processing Layer]
+                    A --> D[3. Storage Layer]
+                    A --> E[4. Serving Layer]
+                    A --> F[5. Reliability & Ops]
+            
+                    click B "modules/module2.html"
+                    click C "modules/module3.html"
+                    click D "modules/module4.html"
+                    click E "modules/module5.html"
+                    click F "modules/module6.html"
+
+                    style A fill:#f8fafc,stroke:#0f172a,stroke-width:2px
+                    style B fill:#f0f9ff,stroke:#0ea5e9
+                    style C fill:#f0f9ff,stroke:#0ea5e9
+                    style D fill:#f0f9ff,stroke:#0ea5e9
+                    style E fill:#f0f9ff,stroke:#0ea5e9
+                    style F fill:#f0f9ff,stroke:#0ea5e9
+                </div>
+            </div>
+        </section>
+
+        <section id="capstone" class="card">
+            <div class="badge-pill">Capstone Project</div>
+            <h2>Design an Enterprise Data Platform</h2>
+            <p>Apply the concepts from every module to build a cohesive platform architecture that follows the complete data lifecycle.</p>
+            
+            <div class="lesson-item">
+                <h4>Module 2: Data Ingress</h4>
+                <p>Capturing high-velocity data via <strong>Logs/Streams</strong> to ensure reliability and decoupling from source systems.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Module 3: Processing Engine</h4>
+                <p>Transforming raw events with <strong>DAGs/Shuffle logic</strong>, ensuring accuracy through watermarks and exactly-once semantics.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Module 4: Storage Foundation</h4>
+                <p>Building a <strong>Secure, Governed Lakehouse</strong> using the Medallion architecture and open table formats.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Module 5: Serving Layer</h4>
+                <p>Modeling data for diverse personas and serving it via <strong>OLAP Engines and low-latency APIs</strong>.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Module 6: Reliability & Ops</h4>
+                <p>Implementing <strong>Observability and Governance</strong> to keep the platform reliable, scalable, and cost-effective.</p>
+            </div>
+
+            <div class="diagram-box">
+                <div class="mermaid">
+                flowchart LR
+                    subgraph Sources [Data Sources]
+                        DB[(DBs / Logs)]
+                        APP[Apps / Events]
+                    end
+
+                    subgraph Ingestion [Ingress]
+                        KAFKA{Stream / Log}
+                    end
+
+                    subgraph Processing [Processing Engine]
+                        DAG[DAG / Shuffle Logic]
+                    end
+
+                    subgraph Storage [Lakehouse]
+                        LAKE[(Secure & Governed)]
+                    end
+
+                    subgraph Serving [Data Serving]
+                        API[APIs / OLAP / Vector Store]
+                    end
+
+                    subgraph Ops [Reliability]
+                        OBS[Governance & Observability]
+                    end
+
+                    Sources --> Ingestion
+                    Ingestion --> Processing
+                    Processing --> Storage
+                    Storage --> Serving
+                    
+                    %% Global Ops Layer
+                    Ops -.-> Ingestion
+                    Ops -.-> Processing
+                    Ops -.-> Storage
+                    Ops -.-> Serving
+
+                    style Sources fill:#f8fafc,stroke:#94a3b8
+                    style Ingestion fill:#f0f9ff,stroke:#0ea5e9
+                    style Processing fill:#f0f9ff,stroke:#0ea5e9
+                    style Storage fill:#f0f9ff,stroke:#0ea5e9
+                    style Serving fill:#f0f9ff,stroke:#0ea5e9
+                    style Ops fill:#fef2f2,stroke:#ef4444
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+</body>
+</html>

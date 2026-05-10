@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 6: Reliability & Governance | CoursePlatform</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+    th {
+        background-color: #f8fafc;
+        font-weight: 600;
+    }
+    .refinement-box {
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 8px;
+    }
+    summary {
+        cursor: pointer;
+        font-weight: 700;
+        list-style: none;
+        display: flex;
+        align-items: center;
+    }
+    summary::-webkit-details-marker {
+        display: none;
+    }
+    summary::before {
+        content: '▶';
+        display: inline-block;
+        margin-right: 10px;
+        transition: transform 0.2s;
+        font-size: 0.8em;
+    }
+    details[open] summary::before {
+        transform: rotate(90deg);
+    }
+</style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <nav class="sidebar">
+        <a href="../../index.html" class="sidebar-brand">CoursePlatform</a>
+        
+        <div class="nav-group">
+            <span class="nav-label">General</span>
+            <a href="../index.html" class="nav-link">Course Overview</a>
+        </div>
+
+        <div class="nav-group">
+            <span class="nav-label">Curriculum</span>
+            <a href="module1.html" class="nav-link">Module 1: Overview</a>
+            <a href="module2.html" class="nav-link">Module 2: Ingestion</a>
+            <a href="module3.html" class="nav-link">Module 3: Processing</a>
+            <a href="module4.html" class="nav-link">Module 4: Storage</a>
+            <a href="module5.html" class="nav-link">Module 5: Serving</a>
+            <a href="module6.html" class="nav-link active">Module 6: Reliability & Gov</a>
+            <div class="nav-subgroup">
+                <a href="#formula" class="nav-sublink">The Reliability Formula</a>
+                <a href="#governance" class="nav-sublink">Data Governance</a>
+                <a href="#security" class="nav-sublink">Data Security</a>
+                <a href="#observability" class="nav-sublink">Data Observability</a>
+                <a href="#metrics" class="nav-sublink">Reliability Framework</a>
+                <a href="#closing" class="nav-sublink">Closing Thought</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <a href="../index.html" class="back-link">← Course Home</a>
+        
+        <section class="header-section">
+            <div class="badge-pill">Module 6</div>
+            <h1>Reliability, Governance & Ops</h1>
+            <p>Mastering the formula for enterprise trust: Governance + Security + Observability.</p>
+        </section>
+
+        <!-- Section: The Reliability Formula -->
+        <div class="card" id="formula">
+            <h2>The Reliability Formula</h2>
+            <p>Reliability is not a single tool; it is a systematic approach to trust. A mature platform balances guardrails with continuous health monitoring.</p>
+            
+            <div class="diagram-box">
+                <div class="mermaid">
+                graph LR
+                    GOV[Governance & Security] --> REL((RELIABILITY))
+                    OBS[Data Observability] --> REL
+                    
+                    style REL fill:#f0fdf4,stroke:#22c55e,stroke-width:3px
+                    style GOV fill:#f0f9ff,stroke:#0ea5e9
+                    style OBS fill:#f0f9ff,stroke:#0ea5e9
+                </div>
+            </div>
+
+            <div class="lesson-item">
+                <h4>Guardrails and Policies</h4>
+                <p>Establishing rules, policies, and <strong>Data Contracts</strong> before data enters the system. This prevents failures and ensures compliance.</p>
+            </div>
+
+            <div class="lesson-item">
+                <h4>Health Monitoring</h4>
+                <p>Monitoring system state in real-time for profiling, anomaly detection & alerting. It identifies the "unknown unknowns" that bypass initial guardrails.</p>
+            </div>
+        </div>
+
+        <!-- Section 5. Key Elements of Data Governance -->
+        <div class="card" id="governance">
+            <h2>Data Governance</h2>
+            <p>While data governance refers to the broader discipline of managing data as a strategic asset it is the foundation of trust. It ensures that data is discoverable, classified, understood, and validated before it reaches consumers.</p>
+    
+            <h3>Key Elements of Data Governance</h3>
+            <div class="lesson-item">
+                <h4>Data Cataloging</h4>
+                <p>The central repository that stores technical and business metadata, providing a structured inventory of all data assets across the platform.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Data Classification</h4>
+                <p>The process of labeling data based on its sensitivity, ownership, and usage (e.g., PII, Internal, Public). This enables automated security and compliance policies.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Data Discovery</h4>
+                <p>The interface that allows users to independently search for, evaluate, and access trusted datasets, reducing the dependency on central technical teams.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Data Lineage</h4>
+                <p>The ability to trace data from a dashboard back to its raw source for impact analysis and troubleshooting.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Data Quality (The "Circuit Breaker")</h4>
+                <p>Using <strong>Data Contracts</strong> to define rules. Failures in the early stages "trip" the circuit, stopping bad data from propagating through the platform.</p>
+            </div>
+        </div>
+
+        <!-- Section 6. Layers of Data Security -->
+        <div class="card" id="security">
+            <h2>The Layers of Data Security</h2>
+            <p>The "Zero Trust" approach to protecting distributed data assets.</p>
+
+            <div class="lesson-item">
+                <h4>Fine-Grained Access Control (FGAC)</h4>
+                <p>Controlling access at the Row and Column level. Ensures users only see the specific data slices they are authorized to view.</p>
+                
+                <details class="refinement-box" style="background: #f0f7ff; border-left: 4px solid #007bff; margin-top: 15px;">
+                    <summary>🚀 Deep Dive: The Shift from Roles to Tags</summary>
+                    <div style="margin-top: 15px;">
+                        <h5>1. RBAC: Role-Based Access Control (The "Old Guard")</h5>
+                        <p>Permissions are hard-coded to Roles (e.g., "UK-Finance-Analyst"). This works for small teams but leads to <strong>Role Explosion</strong> at scale.</p>
+
+                        <h5>2. Tag-Based & Attribute Security (The Modern Standard)</h5>
+                        <p>Instead of securing individual tables, you secure <strong>Metadata</strong>. You define a single policy that evaluates tags across users and resources.</p>
+                        <p><strong>The Magic Logic:</strong> A single rule says: <em>"Grant access if User.Region == Resource.Region."</em> This one rule scales across every table in the platform automatically.</p>
+
+                        <h5 style="margin-top: 20px;">Security Comparison Table</h5>
+                        <div style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Feature</th>
+                                        <th>RBAC (Legacy)</th>
+                                        <th>Tag-Based (Modern)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Management</strong></td>
+                                        <td>Manual / High Effort</td>
+                                        <td>Automated / Policy-as-Code</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Scalability</strong></td>
+                                        <td>Poor (Role Explosion)</td>
+                                        <td>Excellent (Dynamic)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Flexibility</strong></td>
+                                        <td>Low (Static)</td>
+                                        <td>High (Context-aware)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Best For</strong></td>
+                                        <td>Small, simple apps</td>
+                                        <td>Enterprise Data Mesh / Lakehouses</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+            </div>
+            <div class="lesson-item">
+                <h4>Masking and Anonymization</h4>
+                <p><strong>Dynamic Masking:</strong> Sensitive fields are masked at query time based on roles, ensuring PII protection without duplicating data.</p>
+            </div>
+            <div class="lesson-item">
+                <h4>Encryption & Audit</h4>
+                <p>Protecting data at rest and in transit, while maintaining a complete audit trail of every read and write event.</p>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="card" id="comparison">
+            <h2>Governance vs. Security</h2>
+            <p>While distinct, they work together as the foundation of platform reliability.</p>
+            
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Data Governance</th>
+                            <th>Data Security</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Primary Goal</strong></td>
+                            <td>Trust and Usability</td>
+                            <td>Safety and Compliance</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Focus Area</strong></td>
+                            <td>Metadata, Quality, Lineage</td>
+                            <td>Access, Encryption, Identity</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Failure Result</strong></td>
+                            <td>"Data Swamp" (Useless data)</td>
+                            <td>"Data Breach" (Exposed data)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Key Concept</strong></td>
+                            <td>The Data Contract</td>
+                            <td>Zero Trust Architecture</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section: Data Observability (The 5 Vital Signs) -->
+        <div class="card" id="observability">
+            <h2>Data Observability</h2>
+                <p>Monitor data pipelines and quality metrics in real-time to detect anomalies, prevent downtime, and maintain trust in data. It detects the "Unknown Unknowns" that bypass initial guardrails.</p>
+               
+            <h3>Data Observability: The 5 Vital Signs</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pillar</th>
+                            <th>Focus</th>
+                            <th>Incident Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Freshness</strong></td>
+                            <td>Latency</td>
+                            <td>A transformation job stalled, causing a 6-hour delay in reports.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Volume</strong></td>
+                            <td>Completeness</td>
+                            <td>A source system only sent 5% of its usual daily records.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Distribution</strong></td>
+                            <td>Correctness</td>
+                            <td>A currency conversion bug caused "Total Sales" to spike by 100x.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Schema</strong></td>
+                            <td>Structure</td>
+                            <td>An unannounced upstream change added a nested field that broke downstream SQL.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lineage</strong></td>
+                            <td>Impact</td>
+                            <td>Tracing a "Gold" tier error back to a specific "Bronze" ingestion bug.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="lesson-item" style="margin-top: 20px;">
+                <h4>Tools of the Trade</h4>
+                <span class="badge-pill">Monte Carlo</span> <span class="badge-pill">Elementary</span> <span class="badge-pill">Soda</span> <span class="badge-pill">Great Expectations</span> <span class="badge-pill">DataHub</span> <span class="badge-pill">Apache Ranger</span>
+            </div>
+        </div>
+
+        <!-- Section: Reliability Framework -->
+        <div class="card" id="metrics">
+            <h2>Reliability Framework: SRE for Data</h2>
+            <p>Aligning platform performance with business expectations using Site Reliability Engineering principles.</p>
+
+            <div class="lesson-item">
+                <h4>SLI / SLO / SLA Hierarchy</h4>
+                <p><strong>SLI (Service Level Indicator):</strong> The metric (e.g., "Minutes since refresh").</p>
+                <p><strong>SLO (Service Level Objective):</strong> The internal target (e.g., "99% of tables refresh in 15 mins").</p>
+                <p><strong>SLA (Service Level Agreement):</strong> The external contract (e.g., "Refund customers if data lag > 4 hours").</p>
+            </div>
+
+            <div class="lesson-item" style="border-bottom: none; background: #f0f9ff; padding: 20px; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                <h4>Pattern: The Error Budget</h4>
+                <p style="margin: 0; color: #1e40af;">
+                    100% reliability is too expensive. The <strong>Error Budget</strong> represents acceptable downtime. When the budget is exhausted, the team pivots from building new features to fixing platform stability until the budget is restored.
+                </p>
+            </div>
+        </div>
+
+        <!-- Closing Thought -->
+        <div class="card card-closing" id="closing">
+            <h2>🏗️ Closing Thought</h2>
+            <div class="lesson-item" style="border-bottom: none;">
+                <blockquote>
+                    "Platform success is built on trust. In a mature architecture, the system tells you it is broken before the user finds out."
+                </blockquote>
+            </div>
+
+            <div class="lesson-item" style="border-bottom: none;">
+                <h4>The Reliability Note</h4>
+                <blockquote>
+                    "Reliability, Governance, and Operations are not separate tasks—they are the unified heartbeat of the data platform. By balancing guardrails with real-time monitoring, we transform technical infrastructure into a reliable foundation for the entire enterprise."
+                </blockquote>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>
