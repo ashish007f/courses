@@ -326,28 +326,28 @@
                             <td>Bounded (Fixed)</td>
                             <td>High (Hours)</td>
                             <td>Low</td>
-                            <td>High (Easy to re-run)</td>
+                            <td>Exactly-once (Deterministic/Replayable) — Results are identical if rerun on the same data.</td>
                         </tr>
                         <tr>
                             <td>Streaming</td>
                             <td>Unbounded</td>
                             <td>Very Low (ms)</td>
                             <td>Very High</td>
-                            <td>Hard (Requires Checkpoints)</td>
+                            <td>Exactly-once (Stateful) — Achieved via distributed checkpoints/watermarks and changelogs(eg. Kafka).</td>
                         </tr>
                         <tr>
                             <td>Micro-Batch</td>
                             <td>Unbounded</td>
                             <td>Low (Seconds)</td>
                             <td>Medium</td>
-                            <td>High (Deterministic)</td>
+                            <td>Exactly-once (Atomic) — Easiest to achieve among unbounded datasets because batches are treated as discrete, replayable units.</td>
                         </tr>
                         <tr>
                             <td>Unified</td>
                             <td>Both</td>
                             <td>Dynamic</td>
                             <td>High</td>
-                            <td>Depends on Sink</td>
+                            <td>Configurable — Depends entirely on the framework (e.g., Structured Streaming) and the external target Sink (e.g., Idempotent or transactional).</td>
                         </tr>
                     </tbody>
                 </table>
